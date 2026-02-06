@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unify | IIT Ropar Community Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        roparBlue: '#003366',
+                        roparGold: '#B8860B',
+                        roparOrange: '#FF8C00',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        .iit-font { font-family: 'Crimson Pro', serif; }
+        .glass-nav { background: rgba(0, 51, 102, 0.95); backdrop-filter: blur(8px); }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .hero-gradient { background: linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.8)), url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1500&q=80'); background-size: cover; background-position: center; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #B8860B; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-roparGold h-1 w-full"></div>
+    <nav class="glass-nav sticky top-0 z-50 text-white border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between h-20 items-center">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
+                <div class="bg-white p-1 rounded">
+                    <img src="https://www.uxdt.nic.in/wp-content/uploads/2024/06/iit-ropar-01.jpg" alt="IIT Ropar Logo" class="h-12">
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight tracking-tight iit-font uppercase">ROPAR <span class="text-roparOrange">MART</span></h1>
+                    <p class="text-[10px] tracking-[0.2em] uppercase text-slate-300">Internal Community Portal</p>
+                </div>
+            </div>
+
+            <div class="hidden lg:flex flex-1 max-w-xl mx-12">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search textbooks, cycles, dorm gear..." 
+                    class="w-full bg-white/10 border border-white/20 rounded-lg py-2.5 px-10 text-sm focus:bg-white focus:text-roparBlue transition-all outline-none">
+                    <svg class="w-4 h-4 absolute left-3 top-3 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <button onclick="openSellModal()" class="bg-roparOrange hover:bg-orange-600 px-6 py-2 rounded font-bold text-sm shadow-lg transition uppercase tracking-wider">Sell +</button>
+                <div class="relative cursor-pointer group" onclick="showWishlistModal()">
+                    <svg class="w-7 h-7 text-white group-hover:text-roparOrange transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span id="wishCount" class="absolute -top-1 -right-1 bg-roparOrange text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold shadow-sm">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h3 id="viewLabel" class="text-2xl font-bold text-roparBlue iit-font">Latest Campus Listings</h3>
+            <div class="flex gap-2">
+                <button onclick="filterCategory('All')" class="text-xs font-bold px-3 py-1 border rounded bg-roparBlue text-white">ALL</button>
+                <button onclick="filterCategory('Textbooks')" class="text-xs font-bold px-3 py-1 border rounded hover:bg-slate-200">TEXTBOOKS</button>
+                <button onclick="filterCategory('Electronics')" class="text-xs font-bold px-3 py-1 border rounded hover:bg-slate-200">ELECTRONICS</button>
+                <button onclick="filterCategory('Cycles')" class="text-xs font-bold px-3 py-1 border rounded hover:bg-slate-200">CYCLES</button>
+            </div>
+        </div>
+
+        <div id="itemGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            </div>
+    </main>
+
+    <div id="modalOverlay" class="hidden fixed inset-0 bg-roparBlue/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded shadow-2xl w-full max-w-lg p-0 overflow-hidden" id="modalContent">
+            </div>
+    </div>
+
+    <script>
+        // Data Store
+        const products = [
+            { id: 1, title: "Algorithms (CLRS) 4th Ed", price: 850, cat: "Textbooks", cond: "Excellent", seller: "Ankit (EE)", img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800" },
+            { id: 2, title: "Hercules MTB Cycle", price: 4200, cat: "Cycles", cond: "Used - 1yr", seller: "Rahul (CSE)", img: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=800" },
+            { id: 3, title: "Dell 27' 4K Monitor", price: 12500, cat: "Electronics", cond: "Mint", seller: "Prof. Gupta", img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=800" },
+            { id: 5, title: "Organic Chem - Clayden", price: 1200, cat: "Textbooks", cond: "Fair", seller: "Vikram (CH)", img: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=800" },
+            { id: 6, title: "Logitech MX Master 3", price: 4500, cat: "Electronics", cond: "Like New", seller: "Aryan (EE)", img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=800" },
+            { id: 7, title: "Scientific Calculator", price: 650, cat: "Lab", cond: "Perfect", seller: "Riya (PH)", img: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800" },
+            { id: 8, title: "Adjustable Table Lamp", price: 300, cat: "Dorm", cond: "Used", seller: "Aman (CE)", img: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=800" },
+            { id: 9, title: "Mountain Bike (Large)", price: 7800, cat: "Cycles", cond: "Brand New", seller: "Siddharth", img: "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?q=80&w=800" },
+            { id: 10, title: "Sony WH-1000XM4", price: 15000, cat: "Electronics", cond: "Mint", seller: "Tanmay", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800" },
+            { id: 11, title: "Intro to Psychology", price: 250, cat: "Textbooks", cond: "Good", seller: "Neha (HS)", img: "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=800" },
+            { id: 12, title: "Canon EOS 1500D", price: 18000, cat: "Electronics", cond: "Like New", seller: "Photography Club", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800" },
+            { id: 13, title: "Hostel Cooling Fan", price: 900, cat: "Dorm", cond: "Used - 2yrs", seller: "Arjun", img: "https://images.unsplash.com/photo-1618944847023-38aa001235f0?q=80&w=800" },
+            { id: 14, title: "Arduino Mega Kit", price: 1100, cat: "Lab", cond: "Complete", seller: "Robotics Soc", img: "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=800" },
+            { id: 16, title: "Thermodynamics - Cengel", price: 550, cat: "Textbooks", cond: "Good", seller: "Sameer (ME)", img: "https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?q=80&w=800" }
+        ];
+
+        let wishlist = [];
+
+        // --- Core Functions ---
+        function render(items) {
+            const grid = document.getElementById('itemGrid');
+            grid.innerHTML = items.map(p => {
+                const isLiked = wishlist.includes(p.id);
+                return `
+                    <div class="bg-white rounded border border-slate-200 overflow-hidden card-hover transition-all group">
+                        <div class="h-52 relative overflow-hidden">
+                            <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute top-0 right-0 p-3">
+                                <button onclick="toggleLike(${p.id})" class="bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition">
+                                    <svg class="w-4 h-4 ${isLiked ? 'fill-red-600 text-red-600' : 'text-slate-400'}" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-3 left-3 bg-roparBlue text-white text-[9px] font-bold px-2 py-1 uppercase tracking-wider">${p.cond}</div>
+                        </div>
+                        <div class="p-5">
+                            <h4 class="text-roparBlue font-bold text-lg leading-tight mb-1 truncate">${p.title}</h4>
+                            <div class="text-xl font-black text-slate-800 mb-4">₹${p.price.toLocaleString()}</div>
+                            <div class="flex gap-2">
+                                <button onclick="openNegotiate('${p.title}', ${p.price})" class="flex-1 border-2 border-slate-100 text-roparBlue text-xs font-bold py-2 rounded hover:bg-slate-50 transition">OFFER</button>
+                                <button onclick="openPaymentGateway('${p.title}', ${p.price})" class="flex-1 bg-roparGold text-white text-xs font-bold py-2 rounded hover:bg-roparBlue transition shadow-md">BUY NOW</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- Wishlist Management ---
+        function toggleLike(id) {
+            const index = wishlist.indexOf(id);
+            if (index > -1) wishlist.splice(index, 1);
+            else wishlist.push(id);
+            document.getElementById('wishCount').innerText = wishlist.length;
+            render(products);
+        }
+
+        function showWishlistModal() {
+            const content = document.getElementById('modalContent');
+            const likedItems = products.filter(p => wishlist.includes(p.id));
+            document.getElementById('modalOverlay').classList.remove('hidden');
+
+            let html = `<div class="p-6">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold text-roparBlue iit-font">Saved Listings (${wishlist.length})</h2>
+                    <button onclick="closeModal()" class="text-slate-400">✕</button>
+                </div>
+                <div class="space-y-4 max-h-80 overflow-y-auto custom-scroll">`;
+            
+            if(likedItems.length === 0) {
+                html += `<p class="text-center text-slate-400 py-10 italic">No items saved yet.</p>`;
+            } else {
+                likedItems.forEach(item => {
+                    html += `<div class="flex items-center gap-4 bg-slate-50 p-3 rounded-lg">
+                        <img src="${item.img}" class="w-12 h-12 object-cover rounded">
+                        <div class="flex-1 font-bold text-sm text-roparBlue">${item.title}</div>
+                        <div class="text-roparGold font-black">₹${item.price}</div>
+                    </div>`;
+                });
+            }
+            html += `</div><button onclick="closeModal()" class="w-full mt-6 bg-roparBlue text-white py-3 rounded font-bold">CLOSE</button></div>`;
+            content.innerHTML = html;
+        }
+
+        // --- Simulated Payment Gateway ---
+        function openPaymentGateway(title, price) {
+            const content = document.getElementById('modalContent');
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            
+            content.innerHTML = `
+                <div class="bg-slate-50 p-4 border-b flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/d/d2/IIT_Ropar_logo.png" class="h-6">
+                        <span class="text-xs font-bold text-roparBlue tracking-widest uppercase">IIT Ropar Secure Pay</span>
+                    </div>
+                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">SSL SECURED</span>
+                </div>
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <p class="text-slate-500 text-xs uppercase tracking-tighter mb-1">Total Payable Amount</p>
+                        <h2 class="text-4xl font-black text-slate-800">₹${price.toLocaleString()}</h2>
+                        <p class="text-[11px] text-slate-400 mt-2 italic">For: ${title}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="border-2 border-roparGold/30 rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-orange-50 transition bg-white shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center font-bold text-blue-600">UPI</div>
+                                <span class="font-bold text-sm">UPI / Google Pay / PhonePe</span>
+                            </div>
+                            <input type="radio" name="pay" checked>
+                        </div>
+                        <div class="border border-slate-200 rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition bg-white">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-xl">💳</div>
+                                <span class="font-bold text-sm text-slate-600">Credit / Debit Card</span>
+                            </div>
+                            <input type="radio" name="pay">
+                        </div>
+                        <div class="border border-slate-200 rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition bg-white">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-xl">🏦</div>
+                                <span class="font-bold text-sm text-slate-600">Net Banking</span>
+                            </div>
+                            <input type="radio" name="pay">
+                        </div>
+                    </div>
+
+                    <button onclick="processFakePayment()" class="w-full bg-roparBlue text-white py-4 rounded-xl mt-8 font-bold text-lg shadow-xl shadow-blue-900/20 active:scale-95 transition">Pay Securely</button>
+                    <button onclick="closeModal()" class="w-full text-slate-400 text-xs font-bold mt-4 uppercase tracking-widest">Cancel Transaction</button>
+                </div>
+                <div class="bg-slate-100 p-3 text-center">
+                    <p class="text-[9px] text-slate-400">Transaction ID: TXN${Math.floor(Math.random()*100000000)} | Managed by IIT Ropar Finance Section</p>
+                </div>
+            `;
+        }
+
+        function processFakePayment() {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="w-20 h-20 border-4 border-roparGold border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                    <h3 class="text-xl font-bold text-roparBlue">Authorizing Payment...</h3>
+                    <p class="text-sm text-slate-500 mt-2">Please do not refresh the page or hit the back button.</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                content.innerHTML = `
+                    <div class="p-12 text-center">
+                        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
+                        <h3 class="text-2xl font-black text-slate-800">Transaction Successful!</h3>
+                        <p class="text-sm text-slate-500 mt-2">The seller has been notified. You can pick up your item from <strong>Hostel Hall 2</strong> or contact them via LDAP email.</p>
+                        <button onclick="closeModal()" class="mt-8 bg-roparBlue text-white px-8 py-3 rounded-lg font-bold">Back to Marketplace</button>
+                    </div>
+                `;
+            }, 2500);
+        }
+
+        // --- Other Utilities ---
+        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+        function openSellModal() {
+            const content = document.getElementById('modalContent');
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            content.innerHTML = `<div class="p-8"><h2 class="text-2xl font-bold text-roparBlue mb-6">List an Item</h2><input type="text" placeholder="Product Title" class="w-full border p-3 rounded mb-4"><button onclick="closeModal()" class="w-full bg-roparBlue text-white py-3 rounded font-bold">Post Ad</button></div>`;
+        }
+
+        function handleSearch() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            render(products.filter(p => p.title.toLowerCase().includes(val)));
+        }
+
+        function filterCategory(cat) {
+            if(cat === 'All') render(products);
+            else render(products.filter(p => p.cat === cat));
+        }
+
+        window.onload = () => render(products);
+    </script>
+</body>
+</html>

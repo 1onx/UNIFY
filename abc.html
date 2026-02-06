@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IIT Ropar | Mail Summarizer Æ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --iit-navy: #002147;
+  --iit-gold: #c5a059;
+  --bg-slate: #f1f5f9;
+  --white: #ffffff;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-slate);
+  color: #1e293b;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Background Slideshow Container */
+#bg-slideshow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Keep it behind everything */
+  overflow: hidden;
+}
+
+.bg-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 1.5s ease-in-out; /* Smooth cross-fade */
+  filter: brightness(0.9) grayscale(20%); /* Optional: makes text more readable */
+}
+
+/* Semi-transparent overlay to ensure text readability */
+#bg-slideshow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(241, 245, 249, 0.75); /* Matches --bg-slate with transparency */
+  backdrop-filter: blur(2px);
+}
+
+.bg-slide.active {
+  opacity: 0.4; /* Controlled transparency for the campus image */
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  max-width: 850px;
+  margin: 60px auto;
+  background: rgba(255, 255, 255, 0.95); /* Slight transparency on the card */
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  padding: 40px 40px 20px;
+  background: var(--iit-navy);
+  color: white;
+  border-bottom: 4px solid var(--iit-gold);
+  text-align: center;
+}
+
+.header h1 { margin: 0; font-weight: 700; font-size: 2rem; }
+.header p { margin: 10px 0 0; opacity: 0.8; font-weight: 300; }
+
+.tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab { font-weight: 600; color: var(--iit-navy); position: relative; }
+.tab::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--iit-gold); }
+
+.btn-primary {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: var(--iit-navy);
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,33,71,0.2); }
+
+.btn-outline {
+  padding: 8px 16px;
+  font-size: 13px;
+  border: 1.5px solid var(--iit-gold);
+  background: transparent;
+  color: var(--iit-navy);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-outline:hover { background: var(--iit-gold); color: white; }
+
+.notice { padding: 30px 40px; border-bottom: 1px solid #f1f5f9; transition: var(--transition); }
+.notice:hover { background-color: rgba(250, 251, 252, 0.8); }
+.notice-title { font-size: 1.1rem; font-weight: 700; color: var(--iit-navy); }
+.notice-meta { font-size: 12px; color: #94a3b8; margin: 8px 0 15px; }
+.notice-text { line-height: 1.7; color: #475569; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 33, 71, 0.6);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show { display: flex; opacity: 1; }
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  padding: 40px;
+  border-radius: 20px;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content { transform: scale(1); }
+.close { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #94a3b8; }
+#summaryList li { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--iit-gold); list-style: none; }
+</style>
+</head>
+
+<body>
+
+<div id="bg-slideshow"></div>
+
+<div class="container">
+  <div class="header">
+    <h1>Indian Institute of Technology Ropar</h1>
+    <p>Academic Mail Intelligence Portal</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">All Inbox Messages</div>
+    <button class="btn-primary" onclick="summarizeAll()">
+      <span>✨</span> Summarize All
+    </button>
+  </div>
+
+  <div class="notice">
+    <div class="notice-title">Internal Assessment – CS302</div>
+    <div class="notice-meta">📅 14 March 2026 • Academic Affairs</div>
+    <div class="notice-text">
+      All second-year students are hereby informed that the internal assessment
+      for the course CS302 will be conducted on 18th March 2026 during regular
+      class hours. Attendance is mandatory for all registered students.
+    </div>
+    <div class="actions">
+      <button class="btn-outline" onclick="toggleSummary(this)">✨ Smart Summarize</button>
+    </div>
+  </div>
+
+  <div class="notice">
+    <div class="notice-title">Industrial Visit: IIT Delhi / Research Lab</div>
+    <div class="notice-meta">📅 12 March 2026 • Student Welfare</div>
+    <div class="notice-text">
+      This is to inform all students that an official trip to IIT has been organized. The designated college bus is scheduled to depart promptly at 8:00 AM, so it is imperative that everyone arrives at the main gate no later than 7:45 AM. Please ensure you are carrying your Student ID card. 
+    </div>
+    <div class="actions">
+      <button class="btn-outline" onclick="toggleSummary(this)">✨ Smart Summarize</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">×</span>
+    <h3 style="color: var(--iit-navy); margin-top:0">📌 Executive Summary</h3>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <ul id="summaryList" style="padding:0"></ul>
+  </div>
+</div>
+
+<script>
+// Slideshow Logic
+const images = [
+  "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=1920", // Replace with real IIT Ropar Image 1
+  "https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=1920", // Replace with real IIT Ropar Image 2
+  "https://images.unsplash.com/photo-1523050853064-855722749a4a?auto=format&fit=crop&q=80&w=1920"  // Replace with real IIT Ropar Image 3
+];
+
+const slideshowContainer = document.getElementById('bg-slideshow');
+let currentIndex = 0;
+
+// Create slides
+images.forEach((src, idx) => {
+  const slide = document.createElement('div');
+  slide.className = `bg-slide ${idx === 0 ? 'active' : ''}`;
+  slide.style.backgroundImage = `url('${src}')`;
+  slideshowContainer.appendChild(slide);
+});
+
+function nextSlide() {
+  const slides = document.querySelectorAll('.bg-slide');
+  slides[currentIndex].classList.remove('active');
+  currentIndex = (currentIndex + 1) % slides.length;
+  slides[currentIndex].classList.add('active');
+}
+
+// Interval of 3 seconds (3000ms)
+setInterval(nextSlide, 3000);
+
+// --- Original Functionalities ---
+const ACTION_WORDS = ["submit","attend","register","pay","report","apply","complete","appear","fill","upload","mandatory"];
+
+function generateSummary(text){
+  const sentences = text.replace(/\n/g," ").split(".").map(s=>s.trim()).filter(Boolean);
+  let best = sentences[0];
+  let bestScore = 0;
+
+  sentences.forEach(sentence=>{
+    let score = 0;
+    ACTION_WORDS.forEach(w=>{
+      if(sentence.toLowerCase().includes(w)) score += 2;
+    });
+    if(/\d{1,2}(st|nd|rd|th)?\s\w+/i.test(sentence)) score += 2;
+    if(/mandatory|last date|immediately|strict/i.test(sentence)) score += 3;
+
+    if(score > bestScore){
+      bestScore = score;
+      best = sentence;
+    }
+  });
+  return best.endsWith(".") ? best : best + ".";
+}
+
+function toggleSummary(btn){
+  const textEl = btn.closest(".notice").querySelector(".notice-text");
+  textEl.style.opacity = 0;
+  setTimeout(() => {
+    if(textEl.dataset.summarized){
+      textEl.innerText = textEl.dataset.original;
+      delete textEl.dataset.summarized;
+      btn.innerText = "✨ Smart Summarize";
+    } else {
+      textEl.dataset.original = textEl.innerText;
+      textEl.innerText = generateSummary(textEl.innerText);
+      textEl.dataset.summarized = true;
+      btn.innerText = "↩ Show Original";
+    }
+    textEl.style.opacity = 1;
+  }, 200);
+}
+
+function summarizeAll(){
+  const list = document.getElementById("summaryList");
+  const modal = document.getElementById("modal");
+  list.innerHTML = "";
+  document.querySelectorAll(".notice-text").forEach(el=>{
+    const rawText = el.dataset.original || el.innerText;
+    const summary = generateSummary(rawText);
+    const li = document.createElement("li");
+    li.textContent = summary;
+    list.appendChild(li);
+  });
+  modal.style.display = "flex";
+  setTimeout(() => modal.classList.add("show"), 10);
+}
+
+function closeModal(){
+  const modal = document.getElementById("modal");
+  modal.classList.remove("show");
+  setTimeout(() => modal.style.display = "none", 300);
+}
+
+window.onclick = function(event) {
+  const modal = document.getElementById("modal");
+  if (event.target == modal) closeModal();
+}
+</script>
+
+</body>
+</html>

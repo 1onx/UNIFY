@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unify | IIT Ropar Interactive Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --iit-blue: #003366; }
+        .vibe-card { transition: all 0.3s ease; cursor: pointer; }
+        .vibe-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        #modal { display: none; background: rgba(0, 51, 102, 0.85); backdrop-filter: blur(8px); }
+    </style>
+</head>
+<body class="bg-[#fcfaf7] text-gray-800 font-sans">
+
+    <nav class="sticky top-0 z-50 bg-[#003366] text-white p-5 shadow-xl">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 onclick="renderPlaces(places)" class="text-2xl font-bold tracking-tighter cursor-pointer">ROPAR<span class="text-yellow-500">VIBE</span></h1>
+            <div class="hidden md:flex space-x-6 text-xs font-semibold uppercase tracking-widest">
+                <span class="cursor-pointer hover:text-yellow-400" onclick="filterByTag('#History')">History</span>
+                <span class="cursor-pointer hover:text-yellow-400" onclick="filterByTag('#Serene')">Nature</span>
+                <span class="cursor-pointer hover:text-yellow-400" onclick="filterByTag('#Wildlife')">Wildlife</span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative h-[50vh] flex items-center justify-center text-center">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1660404404837-7ecaf7187817?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cm9wYXJ8ZW58MHx8MHx8fDA%3D" class="w-full h-full object-cover" alt="IIT Ropar">
+            <div class="absolute inset-0 bg-[#003366cc]"></div>
+        </div>
+        <div class="relative z-10 px-6 w-full max-w-2xl">
+            <h2 class="text-4xl md:text-5xl font-black text-white mb-6">Explore the Vibe.</h2>
+            <div class="flex bg-white rounded-xl shadow-2xl p-2">
+                <input id="searchInput" type="text" placeholder="Search hashtags like #Art or #Lake..." class="flex-grow px-4 py-3 focus:outline-none">
+                <button onclick="handleSearch()" class="bg-yellow-600 text-white px-6 py-3 rounded-lg font-bold">SEARCH</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="container mx-auto px-4 py-16">
+        <div id="placesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            </div>
+    </section>
+
+    <div id="modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-2xl font-bold bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10">×</button>
+            <img id="modalImg" class="w-full h-64 object-cover" src="" alt="">
+            <div class="p-8">
+                <h3 id="modalTitle" class="text-3xl font-black text-[#003366] mb-2"></h3>
+                <div id="modalTags" class="flex gap-2 mb-4"></div>
+                <p id="modalDesc" class="text-gray-600 mb-6 leading-relaxed"></p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-8 text-sm">
+                    <div class="bg-blue-50 p-3 rounded-lg"><i class="fas fa-map-marker-alt mr-2"></i> <span id="modalDist"></span></div>
+                    <div class="bg-yellow-50 p-3 rounded-lg"><i class="fas fa-ticket-alt mr-2"></i> <span id="modalFee"></span></div>
+                </div>
+
+                <a id="directionsBtn" target="_blank" class="block w-full text-center bg-[#003366] text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition">
+                    <i class="fas fa-directions mr-2"></i> GET DIRECTIONS FROM CAMPUS
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const places = [
+            {
+                id: 1,
+                name: "Fateh Burj",
+                tags: ["#History", "#Pride"],
+                dist: "38 KM",
+                fee: "Entry: Free",
+                desc: "India's tallest victory tower, standing at 328 feet. It commemorates the victory of Banda Singh Bahadur over the Mughal army. A majestic spot for history enthusiasts.",
+                img: "https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&q=80&w=800",
+                coords: "30.7031,76.6679"
+            },
+            {
+                id: 2,
+                name: "Chattbir Zoo",
+                tags: ["#Wildlife", "#Safari"],
+                dist: "71 KM",
+                fee: "Entry: ₹100",
+                desc: "Home to the famous Royal Bengal Tiger safari. This zoological park offers a vast walk-in aviary and diverse species in their natural-style habitats.",
+                img: "https://media.istockphoto.com/id/1585840008/photo/a-big-deer-family.webp?a=1&b=1&s=612x612&w=0&k=20&c=TwNNwYiMMqLxK5FQFflJIXrMVt71-gnIdHloXO1W7QQ=",
+                coords: "30.6036,76.7928"
+            },
+            {
+                id: 3,
+                name: "Sukhna Lake",
+                tags: ["#Serene", "#Boating"],
+                dist: "51 KM",
+                fee: "Entry: Free",
+                desc: "A picturesque man-made lake at the foothills of the Himalayas. Known for its promenade, shikara rides, and the most peaceful morning vibes near Chandigarh.",
+                img: "https://media.istockphoto.com/id/1323984081/photo/sunset-at-sukhna-lake.webp?a=1&b=1&s=612x612&w=0&k=20&c=tiVSr9DE5bjYubJ2tXEk_B8JzRK-74j6pKwG5_6MOoo=",
+                coords: "30.7421,76.8188"
+            },
+            {
+                id: 4,
+                name: "Rock Garden",
+                tags: ["#Art", "#Creative"],
+                dist: "48 KM",
+                fee: "Entry: ₹30",
+                desc: "A massive open-air exhibition hall using urban and industrial waste. Sculptures made of bangles, ceramic, and tiles arranged in a maze-like fairy tale setting.",
+                img: "https://images.unsplash.com/photo-1718244200930-3ce5b5b40607?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cm9jayUyMGdhcmRlbnxlbnwwfHwwfHx8MA%3D%3D",
+                coords: "30.7525,76.8071"
+            }
+        ];
+
+        const grid = document.getElementById('placesGrid');
+        const modal = document.getElementById('modal');
+
+        function renderPlaces(items) {
+            grid.innerHTML = items.map(p => `
+                <div onclick="openModal(${p.id})" class="vibe-card bg-white rounded-2xl overflow-hidden shadow-md">
+                    <img src="${p.img}" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <div class="flex justify-between text-[10px] font-black text-blue-800 mb-2 uppercase tracking-tighter">
+                            <span>${p.tags.join(' ')}</span>
+                            <span>${p.dist}</span>
+                        </div>
+                        <h4 class="text-xl font-bold mb-1">${p.name}</h4>
+                        <p class="text-gray-500 text-xs line-clamp-2">${p.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = places.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.tags.some(t => t.toLowerCase().includes(query))
+            );
+            renderPlaces(filtered);
+        }
+
+        function filterByTag(tag) {
+            const filtered = places.filter(p => p.tags.includes(tag));
+            renderPlaces(filtered);
+        }
+
+        function openModal(id) {
+            const p = places.find(item => item.id === id);
+            document.getElementById('modalTitle').innerText = p.name;
+            document.getElementById('modalImg').src = p.img;
+            document.getElementById('modalDesc').innerText = p.desc;
+            document.getElementById('modalDist').innerText = p.dist + " from IIT Ropar";
+            document.getElementById('modalFee').innerText = p.fee;
+            document.getElementById('modalTags').innerHTML = p.tags.map(t => `<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded">${t}</span>`).join('');
+            
+            // Google Maps Link (From IIT Ropar Main Campus)
+            const mapUrl = `https://www.google.com/maps/dir/IIT+Ropar+Main+Campus,+Transit+Rd,+Rupnagar,+Punjab/${p.coords}`;
+            document.getElementById('directionsBtn').href = mapUrl;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() { modal.style.display = 'none'; }
+
+        // Initial Load
+        renderPlaces(places);
+    </script>
+</body>
+</html>

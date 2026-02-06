@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Project Nexus – IIT Ropar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root {
+  --iitr-blue: #1e3a8a;
+  --iitr-accent: #fbbf24; 
+  --bg: #0f172a; /* Darker background for better contrast with animations */
+  --card: rgba(255, 255, 255, 0.9);
+  --text: #1e293b;
+  --muted: #64748b;
+  --glass: rgba(255, 255, 255, 0.75);
+}
+
+* { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #0f172a;
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* --- Animated Background Particles --- */
+.bg-animation {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, #0f172a 100%);
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* --- Content Container --- */
+.container {
+  max-width: 850px;
+  margin: 60px auto;
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+header {
+  padding: 50px 30px;
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(30, 64, 175, 0.8) 100%);
+  color: white;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+header h2 { margin: 0; font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; }
+header p { opacity: 0.8; font-weight: 300; margin-top: 10px; font-size: 1.1rem; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.tab {
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 600;
+  border: 2px solid transparent;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tab.active {
+  background: var(--iitr-blue);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.3);
+}
+
+.tab:hover:not(.active) {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* Section & Cards */
+.section { padding: 30px; display: none; }
+.section.active { display: block; animation: slideUp 0.4s ease-out; }
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  border-color: var(--iitr-accent);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.card-info b { font-size: 1.2rem; display: block; color: var(--iitr-blue); }
+.card-info span { font-size: 0.9rem; color: var(--muted); display: flex; align-items: center; gap: 5px; margin-top: 4px; }
+
+.join {
+  background: var(--iitr-blue);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2);
+}
+
+.join:hover { background: #1e40af; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(30, 58, 138, 0.3); }
+
+.add-card {
+  border: 2px dashed #cbd5e1;
+  background: rgba(255,255,255,0.4);
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.add-card:hover { background: white; border-style: solid; color: var(--iitr-blue); }
+
+.match {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  background: #f0fdf4;
+  padding: 15px;
+  border-left: 5px solid #22c55e;
+  border-radius: 0 12px 12px 0;
+  animation: slideIn 0.4s ease forwards;
+  font-size: 0.95rem;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 28px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  outline: none;
+}
+
+.modal-content input:focus { border-color: var(--iitr-blue); background: #f8fafc; }
+
+.close { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; color: var(--muted); }
+
+/* Keyframes */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-animation" id="bgAnim"></div>
+
+<div class="container">
+  <header>
+    <h2>🌐 Indian Institute Of Technology<span style="color:var(--iitr-accent)">Ropar</span></h2>
+    <p>Connecting Zeitgeist to Daily Life</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('events',this)">🎪 Events</div>
+    <div class="tab" onclick="switchTab('study',this)">📚 Study</div>
+    <div class="tab" onclick="switchTab('carpool',this)">🚗 Carpool</div>
+  </div>
+
+  <div class="section active" id="events"></div>
+  <div class="section" id="study"></div>
+  <div class="section" id="carpool"></div>
+</div>
+
+<div class="modal" id="addModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAdd()">✕</span>
+    <h3 id="addTitle" style="color:var(--iitr-blue); margin-top:0;"></h3>
+    <input id="newName" placeholder="Title (e.g. Night Canteen Run)">
+    <input id="newExtra" placeholder="Details (e.g. Near Satluj Hostel)">
+    <button class="join" style="width:100%; margin-top:10px; padding:15px;" onclick="addItem()">Post to Nexus</button>
+  </div>
+</div>
+
+<script>
+// Create background particles
+const bgAnim = document.getElementById('bgAnim');
+for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 5 + 2 + 'px';
+    p.style.width = size;
+    p.style.height = size;
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDelay = Math.random() * 20 + 's';
+    p.style.opacity = Math.random();
+    bgAnim.appendChild(p);
+}
+
+let currentAddType="";
+
+const data={
+  event:[
+    {title:"Inter-IIT Practice", loc:"Main Grounds"},
+    {title:"Zeitgeist Tech-Talk", loc:"LHC - 101"}
+  ],
+  study:[
+    {title:"MA101 Prep", loc:"Central Library"},
+    {title:"Machine Learning Group", loc:"Computer Lab"}
+  ],
+  ride:[
+    {title:"Ropar Stn → Campus", loc:"4:00 PM Sunday"},
+    {title:"Campus → Chandigarh", loc:"Saturday Morning"}
+  ]
+};
+
+function render(){
+  events.innerHTML = data.event.map(e=>card(e.title, e.loc, "event")).join("") + addCard("event");
+  study.innerHTML = data.study.map(s=>card(s.title, s.loc, "study")).join("") + addCard("study");
+  carpool.innerHTML = data.ride.map(r=>card(r.title, r.loc, "ride")).join("") + addCard("ride");
+}
+
+function card(name, sub, type){
+  return `
+  <div class="card">
+    <div class="card-info">
+        <b>${name}</b>
+        <span>📍 ${sub}</span>
+    </div>
+    <button class="join" onclick="join(this, '${name}','${type}')">Join</button>
+  </div>`;
+}
+
+function addCard(type){
+  const label = type==="event"?"Post Event":type==="study"?"Form Study Group":"Offer Ride";
+  return `
+  <div class="card add-card" onclick="openAdd('${type}')">
+    <b>+ ${label}</b>
+  </div>`;
+}
+
+function openAdd(type){
+  currentAddType=type;
+  addTitle.innerText = type==="event" ? "New Event" : type==="study" ? "New Study Group" : "Offer a Ride";
+  addModal.style.display="flex";
+}
+
+function addItem(){
+  const name = newName.value;
+  const extra = newExtra.value || "TBD";
+  if(!name) return;
+  
+  const key = currentAddType === "ride" ? "ride" : currentAddType;
+  data[key].push({title: name, loc: extra});
+  closeAdd();
+  render();
+}
+
+function closeAdd(){
+  addModal.style.display="none";
+  newName.value="";
+  newExtra.value="";
+}
+
+function join(btn, name, type){
+  btn.innerText = "Joined ✓";
+  btn.style.background = "#22c55e";
+  btn.style.boxShadow = "none";
+  const div = document.createElement('div');
+  div.className = "match";
+  div.innerHTML = `🤝 <b>Success!</b> You've been added to "${name}". Check notifications soon.`;
+  btn.closest('.card').after(div);
+  btn.disabled = true;
+}
+
+function switchTab(id,el){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+const events=document.getElementById("events");
+const study=document.getElementById("study");
+const carpool=document.getElementById("carpool");
+const addModal=document.getElementById("addModal");
+const addTitle=document.getElementById("addTitle");
+const newName=document.getElementById("newName");
+const newExtra=document.getElementById("newExtra");
+
+render();
+</script>
+
+</body>
+</html> 

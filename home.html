@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIFY </title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --iit-blue: #003366;
+            --iit-gold: #c5a059;
+            --white: #ffffff;
+            --glass: rgba(0, 30, 60, 0.75);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            /* Background Image with optimized overlay */
+            background: linear-gradient(rgba(0, 15, 30, 0.7), rgba(0, 15, 30, 0.85)), 
+                        url('https://www.iitrpr.ac.in/sites/default/files/styles/large/public/2019-11/Main%20Gate.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+        .logo span { color: var(--iit-gold); }
+
+        /* Navigation Grid */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 5%;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 60px; /* Space for slider below */
+        }
+
+        .nav-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 35px 10px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--white);
+            transition: var(--transition);
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-card i { font-size: 2.2rem; color: var(--iit-gold); margin-bottom: 15px; display: block; }
+        .nav-card h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            background: rgba(197, 160, 89, 0.25);
+            border-color: var(--iit-gold);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        /* Full Width Horizontal Slider */
+        .happenings-wrapper {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid var(--iit-gold);
+            border-bottom: 1px solid var(--iit-gold);
+            padding: 15px 0;
+            overflow: hidden; /* Hide the overflow for the marquee effect */
+            white-space: nowrap;
+            position: relative;
+        }
+
+        /* Label for the slider */
+        .slider-fixed-label {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: var(--iit-gold);
+            color: var(--iit-blue);
+            padding: 0 25px;
+            display: flex;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            z-index: 10;
+            box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .marquee-content {
+            display: inline-block;
+            padding-left: 100%; /* Start from far right */
+            animation: marquee 25s linear infinite;
+        }
+
+        .news-item {
+            display: inline-block;
+            font-size: 1.1rem;
+            font-weight: 400;
+            padding: 0 50px;
+            color: var(--white);
+        }
+
+        .news-item span {
+            color: var(--iit-gold);
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Pause on hover */
+        .happenings-wrapper:hover .marquee-content {
+            animation-play-state: paused;
+        }
+
+        footer {
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .nav-grid { grid-template-columns: repeat(2, 1fr); }
+            .slider-fixed-label { padding: 0 10px; font-size: 0.6rem; }
+            body { overflow-y: auto; height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <h1>unify<span>IIT ROPAR</span></h1>
+        </div>
+        <div class="campus-status">
+            <small><i class="fas fa-satellite"></i> SUPER UNIVERSITY PORTAL</small>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+        <div class="nav-grid">
+            <a href="mess.html" class="nav-card">
+                <i class="fas fa-utensils"></i>
+                <h3>Refectory</h3>
+            </a>
+            <a href="tour.html" class="nav-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Explore Vibe</h3>
+            </a>
+            <a href="abc.html" class="nav-card">
+                <i class="fas fa-newspaper"></i>
+                <h3>Bulletins</h3>
+            </a>
+            <a href="def.html" class="nav-card">
+                <i class="fas fa-handshake"></i>
+                <h3>Nexus</h3>
+            </a>
+            <a href="marketplace.html" class="nav-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Blue Market</h3>
+            </a>
+        </div>
+
+    </main>
+
+    <div class="happenings-wrapper">
+        <div class="slider-fixed-label">Live Updates</div>
+        <div class="marquee-content">
+            <div class="news-item"><span>•</span> India AI Impact Summit 2026: Pre-summit registrations for sAIDE are now open.</div>
+            <div class="news-item"><span>•</span> Cynosure 2026: National Conference on Mathematics coming to campus this February.</div>
+            <div class="news-item"><span>•</span> Startup Alert: '100 Startups 100 Days' drive identifies 15 new deep-tech student ventures.</div>
+            <div class="news-item"><span>•</span> Research Breakthrough: New findings in Sustainable River Sand-Mining published by Civil Dept.</div>
+            <div class="news-item"><span>•</span> Placement Update: 45+ Fortune 500 companies confirmed for the upcoming Spring session.</div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 INDIAN INSTITUTE OF TECHNOLOGY ROPAR | AGNI - THE DIGITAL BACKBONE
+    </footer>
+
+</body>
+</html>

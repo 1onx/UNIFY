@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIT Ropar - Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            background-color: #F8FAFC;
+        }
+
+        /* --- LEFT PANEL --- */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(to bottom, rgba(11, 48, 104, 0.85), rgba(11, 48, 104, 0.95)), 
+                        url('https://images.unsplash.com/photo-1709722741348-3aecacb3f2c3?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .brand img {
+            height: 55px;
+            background: white;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        .brand-text { font-weight: 900; font-size: 2.0rem; line-height: 1.1; }
+        .brand-subtext { font-size: 1.00rem; font-weight: 600; opacity: 0.9; }
+
+        .hero-text { margin-top: auto; margin-bottom: 40px; max-width: 550px; }
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .highlight { color: #F4B400; }
+        .hero-text p { font-size: 1.05rem; line-height: 1.6; opacity: 0.9; margin-bottom: 40px; }
+
+        .stats-row {
+            display: flex; gap: 60px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 30px;
+        }
+        .stat-item h3 { font-size: 1.6rem; color: #F4B400; margin-bottom: 5px; font-weight: 700; }
+        .stat-item span { font-size: 0.9rem; opacity: 0.8; }
+
+        /* --- RIGHT PANEL --- */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .form-container {
+            width: 100%; 
+            max-width: 440px;
+            padding: 30px;
+            min-height: 650px; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 2.2rem;
+            color: #0B3068; margin-bottom: 10px;
+        }
+        .header p { color: #64748b; }
+
+        .toggle-wrapper {
+            background: #EDEFF2;
+            padding: 4px; border-radius: 10px;
+            display: flex; margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+        .toggle-btn {
+            flex: 1; padding: 10px; text-align: center;
+            border-radius: 8px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s; color: #64748b;
+        }
+        .toggle-btn.active {
+            background: #0B3068; color: white;
+            box-shadow: 0 2px 5px rgba(11, 48, 104, 0.2);
+        }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label {
+            display: block; margin-bottom: 8px;
+            color: #334155; font-weight: 600; font-size: 0.9rem;
+        }
+        .input-wrapper { position: relative; }
+        .input-wrapper i.icon {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%); color: #94a3b8;
+        }
+        .input-wrapper i.eye-toggle {
+            position: absolute; 
+            right: 16px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #94a3b8; 
+            cursor: pointer;
+            z-index: 10;
+            padding: 5px;
+        }
+        .input-wrapper i.eye-toggle:hover { color: #0B3068; }
+
+        .input-wrapper input {
+            width: 100%; padding: 14px 14px 14px 48px;
+            background: white; border: 1px solid #cbd5e1;
+            border-radius: 10px; font-size: 0.95rem; color: #1e293b;
+            transition: all 0.2s;
+        }
+        .input-wrapper input:focus {
+            outline: none; border-color: #0B3068;
+            box-shadow: 0 0 0 3px rgba(11, 48, 104, 0.1);
+        }
+
+        .forgot-pass {
+            float: right; font-size: 0.85rem; color: #0B3068;
+            font-weight: 600; text-decoration: none;
+        }
+        .submit-btn {
+            width: 100%; background-color: #0B3068; color: white;
+            border: none; padding: 16px; border-radius: 10px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            gap: 10px; transition: background 0.2s; margin-top: 10px;
+        }
+        .submit-btn:hover { background-color: #09254F; }
+
+        .footer-section { margin-top: auto; }
+        .footer-links {
+            margin-top: 25px; text-align: center;
+            font-size: 0.85rem; color: #94a3b8; line-height: 1.5;
+        }
+        .footer-links a { color: #0B3068; text-decoration: none; font-weight: 600; }
+        .support { margin-top: 20px; text-align: center; font-size: 0.9rem; color: #64748b; }
+        .support a { color: #0B3068; font-weight: 600; text-decoration: none; }
+
+        #signin-message, #signup-message {
+            margin-top: 15px; text-align: center;
+            font-size: 0.9rem; font-weight: 500; min-height: 20px;
+        }
+        .success { color: #16a34a; }
+        .error { color: #dc2626; }
+        .hidden { display: none; }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; height: auto; }
+            .left-panel { padding: 40px 30px; min-height: 450px; }
+            .right-panel { padding: 40px 20px; }
+            .form-container { min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="left-panel">
+        <div class="brand">
+            <img src="https://www.uxdt.nic.in/wp-content/uploads/2024/06/iit-ropar-01.jpg" alt="IIT Ropar Logo">
+            <div>
+                <div class="brand-subtext">भारतीय प्रौद्योगिकी संस्थान रोपड़</div>
+                <div class="brand-text">IIT Ropar</div>
+            </div>
+        </div>
+
+        <div class="hero-text">
+            <h1>Shape the Future Through <span class="highlight">Innovation</span> & Excellence</h1>
+            <p>Join one of India's premier institutions of technology and research.</p>
+            <div class="stats-row">
+                <div class="stat-item"><h3>2,500+</h3><span>Research Papers</span></div>
+                <div class="stat-item"><h3>3,000+</h3><span>Students</span></div>
+                <div class="stat-item"><h3>150+</h3><span>Patents Filed</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="form-container">
+            <div class="header">
+                <h2>Welcome Back</h2>
+                <p id="header-subtext">Sign in to access your academic portal</p>
+            </div>
+
+            <div class="toggle-wrapper">
+                <div class="toggle-btn active" id="btn-signin" onclick="switchForm('signin')">Sign In</div>
+                <div class="toggle-btn" id="btn-signup" onclick="switchForm('signup')">Sign Up</div>
+            </div>
+
+            <div id="form-signin">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope icon"></i>
+                        <input type="email" id="signin-email" placeholder="your.email@iitrpr.ac.in">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password <a href="#" class="forgot-pass">Forgot password?</a></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock icon"></i>
+                        <input type="password" id="signin-password" placeholder="Enter your password">
+                        <i class="fa-regular fa-eye eye-toggle" id="toggle-signin" onclick="togglePassword('signin-password', 'toggle-signin')"></i>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="validateSignIn()">
+                    Sign In <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <div id="signin-message"></div>
+            </div>
+
+            <div id="form-signup" class="hidden">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user icon"></i>
+                        <input type="text" id="signup-name" placeholder="Enter your full name">
+                    </div>
+                </div>
+                 <div class="input-group">
+                    <label>Institute Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope icon"></i>
+                        <input type="email" id="signup-email" placeholder="your.email@iitrpr.ac.in">
+                    </div>
+                </div>
+                 <div class="input-group">
+                    <label>Roll Number</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-id-card-clip icon"></i>
+                        <input type="text" id="signup-roll" placeholder="e.g., 2023CSB1XXX">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Create Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock icon"></i>
+                        <input type="password" id="signup-password" placeholder="Create a strong password">
+                        <i class="fa-regular fa-eye eye-toggle" id="toggle-signup" onclick="togglePassword('signup-password', 'toggle-signup')"></i>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="validateSignUp()">
+                    Create Account <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                 <div id="signup-message"></div>
+            </div>
+
+            <div class="footer-section">
+                <div class="footer-links">
+                    By continuing, you agree to IIT Ropar's <br><a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </div>
+                <div class="support">
+                    Need help? <a href="#">Contact IT Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btnSignIn = document.getElementById('btn-signin');
+        const btnSignUp = document.getElementById('btn-signup');
+        const formSignIn = document.getElementById('form-signin');
+        const formSignUp = document.getElementById('form-signup');
+        const headerSubtext = document.getElementById('header-subtext');
+        const signInMsg = document.getElementById('signin-message');
+        const signUpMsg = document.getElementById('signup-message');
+
+        function switchForm(type) {
+            signInMsg.textContent = ''; signInMsg.className = '';
+            signUpMsg.textContent = ''; signUpMsg.className = '';
+            if (type === 'signup') {
+                btnSignIn.classList.remove('active');
+                btnSignUp.classList.add('active');
+                formSignIn.classList.add('hidden');
+                formSignUp.classList.remove('hidden');
+                headerSubtext.textContent = "Create your account to get started";
+            } else {
+                btnSignUp.classList.remove('active');
+                btnSignIn.classList.add('active');
+                formSignUp.classList.add('hidden');
+                formSignIn.classList.remove('hidden');
+                headerSubtext.textContent = "Sign in to access your academic portal";
+            }
+        }
+
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function validateSignIn() {
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+
+            // Updated credentials check
+            if (email === "iitropar@gmail.com" && password === "advitiya") {
+                signInMsg.textContent = "Login Successful! Redirecting...";
+                signInMsg.className = "success";
+                
+                // Redirecting to the blank success page after 1.5 seconds
+                setTimeout(() => {
+                    window.location.href = "home.html";
+                }, 1500);
+            } else {
+                signInMsg.textContent = "Invalid credentials. Please try again.";
+                signInMsg.className = "error";
+            }
+        }
+
+        function validateSignUp() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const roll = document.getElementById('signup-roll').value;
+            const pass = document.getElementById('signup-password').value;
+
+            if (name && email && roll && pass) {
+                signUpMsg.textContent = "Account created successfully! Please Sign In.";
+                signUpMsg.className = "success";
+                setTimeout(() => switchForm('signin'), 2000);
+            } else {
+                signUpMsg.textContent = "Please fill in all fields.";
+                signUpMsg.className = "error";
+            }
+        }
+    </script>
+</body>
+</html>
